@@ -1,26 +1,32 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <FloatingNav />
+
+    <HeroSection />
+    <AboutSection />
+    <HighlightsSection />
+    <ExperienceSection />
+    <SkillsSection />
+    <ProjectsSection />
+    <ContactSection />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import FloatingNav from './components/FloatingNav.vue'
+import HeroSection from './components/sections/HeroSection.vue'
+import AboutSection from './components/sections/AboutSection.vue'
+import HighlightsSection from './components/sections/HighlightsSection.vue'
+import ExperienceSection from './components/sections/ExperienceSection.vue'
+import SkillsSection from './components/sections/SkillsSection.vue'
+import ProjectsSection from './components/sections/ProjectsSection.vue'
+import ContactSection from './components/sections/ContactSection.vue'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  name:'App',
+  components:{
+    FloatingNav, HeroSection, AboutSection, HighlightsSection,
+    ExperienceSection, SkillsSection, ProjectsSection, ContactSection
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
