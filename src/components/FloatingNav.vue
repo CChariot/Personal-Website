@@ -1,16 +1,18 @@
 <template>
-  <nav
-    class="float-nav"
-    :class="{ expanded: hovering }"
-    @mouseenter="hovering = true"
-    @mouseleave="hovering = false"
-  >
+  <nav class="float-nav">
     <ul>
-      <li v-for="item in items" :key="item.id" :class="{ active: activeId === item.id }">
-        <a :href="'#' + item.id" class="pill">
+      <li v-for="item in items" :key="item.id">
+        <button
+          type="button"
+          class="pill"
+          :class="{ active: activeId === item.id }"
+          @click="scrollTo(item.id)"
+          @keydown.enter.prevent="scrollTo(item.id)"
+          @keydown.space.prevent="scrollTo(item.id)"
+        >
           <span class="icon" aria-hidden="true">{{ item.icon }}</span>
           <span class="label">{{ item.label }}</span>
-        </a>
+        </button>
       </li>
     </ul>
   </nav>
@@ -21,7 +23,6 @@ export default {
   name: 'FloatingNav',
   data() {
     return {
-      hovering: false,
       activeId: 'home',
       items: [
         { id: 'home',       label: 'Home',       icon: '🏠' },
@@ -31,93 +32,124 @@ export default {
         { id: 'skills',     label: 'Skills',     icon: '⚡' },
         { id: 'projects',   label: 'Projects',   icon: '📂' },
         { id: 'contact',    label: 'Contact',    icon: '📧' }
-      ]
-    }
+      ],
+      obs: null,            // IntersectionObserver instance
+      rafId: null,          // requestAnimationFrame id for scroll throttling
+      onScrollHandler: null // bound scroll handler
+    };
   },
   mounted() {
-    // highlight current section as you scroll
-    const sections = this.items
+    // Observe sections so the correct pill is highlighted while scrolling
+    const targets = this.items
       .map(i => document.getElementById(i.id))
-      .filter(Boolean)
+      .filter(Boolean);
 
-    const obs = new IntersectionObserver(
+    this.obs = new IntersectionObserver(
       entries => {
-        entries.forEach(e => { if (e.isIntersecting) this.activeId = e.target.id })
+        // choose most visible intersecting entry
+        let best = null;
+        let ratio = 0;
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio >= ratio) {
+            best = e;
+            ratio = e.intersectionRatio;
+          }
+        }
+        if (best) this.activeId = best.target.id;
       },
-      { rootMargin: '-45% 0px -50% 0px', threshold: 0.01 }
-    )
-    sections.forEach(s => obs.observe(s))
+      { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '-40% 0px -40% 0px' }
+    );
+    targets.forEach(t => this.obs.observe(t));
+
+    // Top/bottom edge handling so Home/Contact highlight at limits
+    const onScroll = () => {
+      if (this.rafId) return;
+      this.rafId = requestAnimationFrame(() => {
+        this.rafId = null;
+        const y =
+          window.scrollY || document.documentElement.scrollTop || 0;
+        const vh =
+          window.innerHeight || document.documentElement.clientHeight;
+        const doc = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight
+        );
+        if (y <= 2) this.activeId = 'home';
+        if (y + vh >= doc - 2) this.activeId = 'contact';
+      });
+    };
+    this.onScrollHandler = onScroll;
+    window.addEventListener('scroll', onScroll, { passive: true });
+  },
+  beforeUnmount() {
+    if (this.obs) this.obs.disconnect();
+    if (this.onScrollHandler)
+      window.removeEventListener('scroll', this.onScrollHandler);
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+  },
+  methods: {
+    scrollTo(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      // optimistic highlight so it flips immediately
+      this.activeId = id;
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: id === 'contact' ? 'end' : 'start'
+      });
+    }
   }
-}
+};
 </script>
 
 <style scoped>
-:root{
-  /* in case you want to tweak later */
-  --nav-active: var(--arsenal-navy);
-  --nav-hover: var(--surface-2);
-}
-
-/* container */
+/* Always-expanded floating sidebar */
 .float-nav{
   position: fixed;
   left: 24px;
   top: 50%;
   transform: translateY(-50%);
-  width: 76px;                 /* collapsed */
-  background: rgba(255,255,255,.92);
+  width: 240px;
+  background: rgba(255,255,255,.96);
   backdrop-filter: blur(6px);
-  border:1px solid var(--border);
-  border-radius: 26px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
   box-shadow: 0 18px 40px rgba(0,0,0,.12);
-  transition: width .25s ease;
-  z-index: 2000;
-  padding: 12px 8px;
-  overflow:hidden;              /* nothing can spill out */
+  z-index: 10000;         /* above everything */
+  padding: 10px 8px;
+  overflow: hidden;       /* nothing spills out and blocks clicks */
+  pointer-events: auto;
 }
-.float-nav.expanded{ width: 230px; }
 
-ul{ list-style:none; margin:0; padding:0; }
-li{ margin: 8px 0; }
+ul{ list-style: none; margin: 0; padding: 0; }
+li{ margin: 6px 0; }
 
-/* pill — COLLAPSED defaults to a centered circle */
 .pill{
-  display:flex; align-items:center; justify-content:center;
-  width: 44px; height: 44px;              /* circle size */
-  padding: 0;
-  margin: 0 auto;                          /* centered in narrow nav */
-  border-radius: 50%;
-  color: var(--text);
-  text-decoration:none; font-weight:700;
-  transition: background .2s, color .2s, transform .2s, width .2s, border-radius .2s, padding .2s, height .2s;
-}
-.pill:hover{ background: var(--nav-hover); }
-
-/* EXPANDED: becomes a full capsule with icon + label */
-.float-nav.expanded .pill{
   width: 100%;
-  height: auto;
-  padding: 10px 14px;
-  border-radius: 9999px;
-  justify-content: flex-start;
+  display: flex; align-items: center; gap: 10px;
+  border: 0; outline: 0; cursor: pointer;
+  background: transparent; color: var(--text);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: left;
+  transition: background .12s ease, color .12s ease;
 }
 
-/* icon + label visibility */
-.icon{ font-size:1.25rem; }
-.label{ display:none; white-space:nowrap; margin-left:10px; }
-.float-nav.expanded .label{ display:inline; }
-
-/* ACTIVE state — solid navy, no gradient */
-li.active .pill{
-  background: var(--nav-active);
-  color:#fff;
+.pill:hover{ background: var(--surface-2); }
+.pill.active{
+  background: var(--arsenal-navy);
+  color: #fff;
   box-shadow: 0 10px 22px rgba(4,30,66,.22);
 }
 
-/* subtle hover for expanded items */
-.float-nav.expanded .pill:hover{
-  background: color-mix(in oklab, var(--nav-active) 10%, white);
-  color: var(--text);
-}
+.icon{ font-size: 1.2rem; line-height: 1; }
+.label{ white-space: nowrap; }
 </style>
 
+<!-- Global anchor offsets so Home/Contact aren’t clipped at page edges -->
+<style>
+[id]{
+  scroll-margin-top: 100px;
+  scroll-margin-bottom: 100px;
+}
+</style>
