@@ -33,26 +33,26 @@ export default {
         { id: 'projects',   label: 'Projects',   icon: '📂' },
         { id: 'contact',    label: 'Contact',    icon: '📧' }
       ],
-      obs: null,            // IntersectionObserver instance
-      rafId: null,          // requestAnimationFrame id for scroll throttling
-      onScrollHandler: null // bound scroll handler
+      obs: null,
+      rafId: null,
+      onScrollHandler: null,
+      userScrolling: false   // lock flag to avoid jump
     };
   },
   mounted() {
-    // Observe sections so the correct pill is highlighted while scrolling
+    // Observe sections for active tracking
     const targets = this.items
       .map(i => document.getElementById(i.id))
       .filter(Boolean);
 
     this.obs = new IntersectionObserver(
       entries => {
-        // choose most visible intersecting entry
+        if (this.userScrolling) return; // don't override while user scrolls
         let best = null;
-        let ratio = 0;
+        let bestRatio = 0;
         for (const e of entries) {
-          if (e.isIntersecting && e.intersectionRatio >= ratio) {
-            best = e;
-            ratio = e.intersectionRatio;
+          if (e.isIntersecting && e.intersectionRatio >= bestRatio) {
+            best = e; bestRatio = e.intersectionRatio;
           }
         }
         if (best) this.activeId = best.target.id;
@@ -61,7 +61,7 @@ export default {
     );
     targets.forEach(t => this.obs.observe(t));
 
-    // Top/bottom edge handling so Home/Contact highlight at limits
+    // Edge handling: highlight Home/Contact at top/bottom
     const onScroll = () => {
       if (this.rafId) return;
       this.rafId = requestAnimationFrame(() => {
@@ -91,12 +91,17 @@ export default {
     scrollTo(id) {
       const el = document.getElementById(id);
       if (!el) return;
-      // optimistic highlight so it flips immediately
+      // Optimistic highlight immediately
       this.activeId = id;
+      this.userScrolling = true;
       el.scrollIntoView({
         behavior: 'smooth',
         block: id === 'contact' ? 'end' : 'start'
       });
+      // unlock after smooth scroll finishes (~600ms)
+      setTimeout(() => {
+        this.userScrolling = false;
+      }, 600);
     }
   }
 };
@@ -115,9 +120,9 @@ export default {
   border: 1px solid var(--border);
   border-radius: 22px;
   box-shadow: 0 18px 40px rgba(0,0,0,.12);
-  z-index: 10000;         /* above everything */
+  z-index: 10000;
   padding: 10px 8px;
-  overflow: hidden;       /* nothing spills out and blocks clicks */
+  overflow: hidden;
   pointer-events: auto;
 }
 
@@ -146,7 +151,7 @@ li{ margin: 6px 0; }
 .label{ white-space: nowrap; }
 </style>
 
-<!-- Global anchor offsets so Home/Contact aren’t clipped at page edges -->
+<!-- Global anchor offsets so Home/Contact aren’t clipped -->
 <style>
 [id]{
   scroll-margin-top: 100px;
