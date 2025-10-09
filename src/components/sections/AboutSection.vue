@@ -10,8 +10,8 @@
     </p>
 
     <p class="lead">
-      I love building reliable, efficient, and scalable systems. Recently that’s meant
-      LLM & AI work—deploying Hugging Face models with ONNX Runtime,
+      I love building reliable, efficient, and scalable systems. Recently I focused on 
+      LLM & AI work. I've been deploying Hugging Face models with ONNX Runtime,
       optimizing edge inference on Jetson with CUDA, and integrating PyTorch and
       OpenAI APIs into production pipelines. I also build full-stack software with
       Python/Go and modern web (Vue/Node), backed by PostgreSQL and AWS services. On the
