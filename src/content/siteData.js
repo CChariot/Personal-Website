@@ -4,7 +4,7 @@ export const hero = {
   tagline: 'Software Engineer',
   email: 'Lihanzhan11@gmail.com',
   github: 'https://github.com/Cchariot',
-  linkedin: 'https://linkedin.com/in/cg'
+  linkedin: 'https://www.linkedin.com/in/lihan-zhan-a07a6612b/'
 }
 
 export const highlights = [
