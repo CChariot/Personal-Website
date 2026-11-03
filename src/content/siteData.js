@@ -1,86 +1,81 @@
-// Central place for content so your components stay lean.
-export const hero = {
+// All site copy lives here, so content updates never touch the components.
+
+export const profile = {
   name: 'Lihan Zhan',
-  tagline: 'Software Engineer',
+  location: 'Pittsburgh, PA',
+  intro:
+    'Software engineer. I build data platforms and LLM inference pipelines for edge devices, where memory is tight and the network drops.',
   email: 'Lihanzhan11@gmail.com',
   github: 'https://github.com/Cchariot',
   linkedin: 'https://www.linkedin.com/in/lihan-zhan-a07a6612b/'
 }
 
-export const highlights = [
-  {
-    title: 'LLM & AI Engineering',
-    body: 'Deployed LLM pipelines with Hugging Face + ONNX Runtime and CUDA; optimized Jetson edge inference (~40% latency reduction). Skilled with PyTorch and OpenAI API, prompt design, and integrating AI into production.'
-  },
-  {
-    title: 'Full-Stack & Backend',
-    body: 'Build scalable services in Python/Go and modern web apps (Vue.js/Node). Real-time, AI-driven features with PostgreSQL, AWS S3, and clean REST patterns.'
-  },
-  {
-    title: 'Containerization & CI/CD',
-    body: 'Reproducible Docker images, image minimization, and automated pipelines (Jenkins/Kubernetes/GitLab CI). Experience with image debugging and reproducibility analysis.'
-  }
-]
-
 export const jobs = [
   {
-    title: 'Software Engineer II',
-    company: 'SEI, Carnegie Mellon University',
-    dates: '05/2022 – Current',
-    location: 'Pittsburgh, PA',
+    role: 'Software Engineer II',
+    org: 'Software Engineering Institute, Carnegie Mellon University',
+    place: 'Pittsburgh, PA',
+    start: '2022',
+    end: 'Present',
     points: [
-      'Deployed edge-optimized LLM inference pipelines (Hugging Face + ONNX Runtime), reducing response latency by ~40% on Jetson Nano.',
-      'Designed and implemented a real-time facial recognition pipeline using PyTorch; integrated AWS S3 for scalable image storage and PostgreSQL for metadata indexing.',
-      'Implemented GPU-accelerated image processing (CUDA) in ROS pipelines on Jetson to automate drone missions.',
-      'Created a container minimization tool, shrinking image output tar size by ~90%.',
-      'Led research to assess GoF design patterns across 30 Apache projects, producing quantitative insights to inform architecture decisions.',
-      'Developed a container reproducibility issue identification tool for dev/prod parity.'
-    ],
-    tech: ['PyTorch','OpenAI API','Hugging Face','ONNX Runtime','Docker','CUDA','ROS','AWS','PostgreSQL','Python','Go','Apache NiFi']
+      'Built a self-service data platform on Apache NiFi. Non-technical operators connect data sources, chain containerized transformations, and send results to external systems, without waiting on engineers.',
+      'Used NATS JetStream to buffer and replay data from edge devices through network outages. The platform runs on k3s behind Istio, with Keycloak sign-on and Kyverno admission policies.',
+      'Built an agentic LLM pipeline (tool calling, retrieval) that turns model specifications into executable MLTE test suites, with grounding checks on what it generates.',
+      'Cut LLM response latency by 40% on a Jetson Nano by moving inference to ONNX Runtime.',
+      'Built an LLM-based pipeline that translates legacy Ada code to C++, increasing translation throughput 4x.',
+      'Built a real-time facial recognition pipeline in PyTorch on AWS, with S3 for images and PostgreSQL for metadata.',
+      'Wrote GPU-accelerated image processing (CUDA) in ROS pipelines on Jetson, and a container minimization tool that shrinks image tarballs by about 90%.'
+    ]
   },
   {
-    title: 'Software Engineer',
-    company: 'Lockheed Martin',
-    dates: '07/2021 – 05/2022',
-    location: 'Moorestown, NJ',
+    role: 'Software Engineer',
+    org: 'Lockheed Martin',
+    place: 'Moorestown, NJ',
+    start: '2021',
+    end: '2022',
     points: [
-      'Improved Solid State Radar performance and addressed client-specific needs using C++ and Python.',
-      'Set up CI/CD with Jenkins & Robot Framework, reducing average test time by ~30%.',
-      'Developed in Agile Scrum; used JIRA and Bitbucket for collaboration.',
-      'Identified radar performance changes and errors using GDB; performed Linux system operations.'
-    ],
-    tech: ['C++','Python','Jenkins','Robot Framework','JIRA','Bitbucket','GDB','Linux']
+      'Set up CI/CD with Jenkins and Robot Framework, cutting average test run time by 30%.',
+      'Improved Solid State Radar software performance in C++ and Python, and tracked down regressions with GDB on Linux.'
+    ]
   }
 ]
 
-
-export const skills = {
-  ai: ['PyTorch','Hugging Face','ONNX Runtime','CUDA','OpenAI API'],
-  fullstack: ['Python','Java','Go','JavaScript','Vue.js','Node.js','PostgreSQL','AWS S3','REST'],
-  devops: ['Docker','Kubernetes','Jenkins','GitLab CI','Git','Linux']
+export const research = {
+  title: 'Small language models on edge devices',
+  context: "CMU master's research, 2025",
+  summary:
+    'I stress-tested six small language models, from 82M to 360M parameters, on a Jetson Xavier NX (8 GB). Prompts grew from 128 to 512 tokens until a model timed out, ran out of memory, or crashed. At each length I measured latency per token, energy per token from tegrastats power traces, peak GPU memory, and failures.',
+  findings: [
+    'Models up to 125M parameters stayed interactive all the way to 512 tokens.',
+    'Models of 350M and up became unstable past about 320 tokens.',
+    'At 512 tokens, SmolLM-135M used about 4x the latency, energy, and memory of DistilGPT2.'
+  ],
+  takeaway:
+    'The practical rule that came out of it: treat prompt length as a budget. For interactive work on this class of device, stay at or under 125M parameters, and shorten prompts or quantize before moving up to 360M.'
 }
 
-export const projects = [
-  {
-    name: 'Story Assistive Writer',
-    period: '2024',
-    stack: ['React', 'Vite', 'TypeScript', 'OpenAI API'],
-    bullets: [
-      'Guides GPT with a structured prompt pipeline (Template → Persona → Verifier) to keep story suggestions consistent and on-tone.',
-      'Implements a rating/feedback loop that influences subsequent prompts and surfaces higher-quality continuations.',
-      'Session state management with safety checks and draft export for later editing; clean component architecture for easy iteration.',
-      'Deployed as a lightweight SPA; fast local dev with Vite and typed hooks with TypeScript.'
-    ],
-  },
-  {
-    name: 'Blackjack AI',
-    period: '2023',
-    stack: ['Python', 'Sockets', 'Jenkins', 'PyTest'],
-    bullets: [
-      'Applied multiple design patterns (Strategy, State, Observer) to separate game engine, policy modules, and I/O.',
-      'Experimented with AI strategies for hit/stand logic; simulated policies to compare outcomes (≈40–60% win-rate range by policy).',
-      'Client/server architecture with sockets; deterministic unit tests and CI via Jenkins.',
-      'CLI tooling for reproducible runs; clear logs and metrics to analyze policy performance.'
-    ],
-  }
+// Latency (seconds per token) read from the study's results chart.
+// Each series stops where the model stopped running reliably.
+export const latency = {
+  lengths: [128, 192, 256, 320, 384, 448, 512],
+  series: [
+    { name: 'DistilGPT2 82M', values: [0.037, 0.042, 0.049, 0.049, 0.069, 0.079, 0.139] },
+    { name: 'OPT 125M', values: [0.052, 0.065, 0.063, 0.077, 0.087, 0.112, 0.144] },
+    { name: 'GPT-Neo 125M', values: [0.074, 0.076, 0.083, 0.108, 0.196, 0.219, 0.258] },
+    { name: 'SmolLM 135M', values: [0.231, 0.244, 0.254, 0.273, 0.329, 0.457, 0.608] },
+    { name: 'OPT 350M', values: [0.105, 0.134, 0.172, 0.434], unstable: true },
+    { name: 'SmolLM 360M', values: [0.291, 0.380, 0.347, 0.533], unstable: true }
+  ]
+}
+
+export const skills = [
+  { group: 'Languages', items: ['Go', 'Python', 'C++', 'Java', 'SQL'] },
+  { group: 'ML and inference', items: ['PyTorch', 'Hugging Face', 'ONNX Runtime', 'CUDA', 'OpenAI API'] },
+  { group: 'Data and messaging', items: ['Apache NiFi', 'NATS JetStream', 'PostgreSQL'] },
+  { group: 'Infrastructure', items: ['Kubernetes', 'k3s', 'Docker', 'Istio', 'AWS', 'Jenkins', 'Linux'] }
+]
+
+export const education = [
+  { school: 'Carnegie Mellon University', degree: 'M.S. Software Engineering', years: '2024–2025' },
+  { school: 'The City College of New York', degree: 'B.S. Computer Science', years: '2016–2021' }
 ]

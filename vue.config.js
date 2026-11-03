@@ -5,7 +5,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       entry: 'src/main.js',
-      title: 'Howdy, stranger :)',
+      title: 'Lihan Zhan',
     },
   },
 })

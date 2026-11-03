@@ -1,71 +1,30 @@
 <template>
-  <section id="experience" class="container" v-in-view>
-    <h2>Experience</h2>
-
-    <article class="job card" v-for="(job,i) in jobs" :key="i">
-      <div class="grid">
-        <!-- Meta (left) -->
-        <div class="meta">
-          <h3 class="role">{{ job.title }}</h3>
-          <div class="company">{{ job.company }}</div>
-          <div class="date">{{ job.dates }} — {{ job.location }}</div>
-
-          <div v-if="job.tech?.length" class="tech">
-            <span class="chip" v-for="t in job.tech" :key="t">{{ t }}</span>
-          </div>
-        </div>
-
-        <!-- Bullets (right) -->
-        <ul class="bullets">
-          <li v-for="(p,idx) in filtered(job.points)" :key="idx">{{ p }}</li>
+  <section id="work" class="section">
+    <h2 class="section-title">Work</h2>
+    <div class="section-body">
+      <article v-for="job in jobs" :key="job.org" class="job">
+        <header>
+          <h3>{{ job.role }}</h3>
+          <p class="org">{{ job.org }}, {{ job.place }}</p>
+          <p class="years">{{ job.start }}–{{ job.end }}</p>
+        </header>
+        <ul class="list">
+          <li v-for="(pt, i) in job.points" :key="i">{{ pt }}</li>
         </ul>
-      </div>
-    </article>
+      </article>
+    </div>
   </section>
 </template>
 
 <script>
 import { jobs } from '../../content/siteData'
-export default {
-  name:'ExperienceSection',
-  data(){ return { jobs } },
-  methods:{
-    filtered(arr){ return (arr || []).filter(Boolean) } // remove accidental blanks
-  }
-}
+export default { name: 'ExperienceSection', data: () => ({ jobs }) }
 </script>
 
 <style scoped>
-.job{ margin: var(--space-4) 0; }
-
-.grid{
-  display:grid;
-  grid-template-columns: 320px 1fr;
-  gap: var(--space-4);
-  align-items:start;
-}
-@media (max-width: 900px){
-  .grid{ grid-template-columns: 1fr; }
-}
-
-/* left column */
-.role{
-  margin:0;
-  color: var(--arsenal-red);
-  font-weight:800;
-  letter-spacing:.2px;
-  font-family: 'Outfit', Inter, system-ui, sans-serif;
-}
-.company{ font-weight:800; margin-top:4px; }
-.date{ color:var(--muted); font-style:italic; margin-top:4px; }
-
-.tech{ display:flex; flex-wrap:wrap; gap:8px; margin-top: var(--space-3); }
-
-/* right column */
-.bullets{
-  margin:0;
-  padding-left: 18px;
-  line-height: 1.6;
-}
-.bullets li{ margin-bottom: 8px; }
+.job + .job { margin-top: 44px; }
+header { margin-bottom: 16px; }
+h3 { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
+.org { margin-top: 2px; }
+.years { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; margin-top: 2px; }
 </style>

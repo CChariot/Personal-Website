@@ -1,114 +1,59 @@
 <template>
-  <section id="home" class="container hero" v-in-view>
-    <ArsenalBanner />
-
-    <div class="hero-inner">
-      <h1>Hi, I’m <span class="accent">{{ name }}</span></h1>
-
-      <!-- Bold gradient role -->
-      <p class="role">Software Engineer</p>
-
-      <!-- Specialties as attractive chips -->
-      <ul class="specialties">
-        <li v-for="(s,i) in specialties" :key="i" class="chip">{{ s }}</li>
+  <section id="top" class="hero">
+    <div class="text">
+      <h1>{{ p.name }}</h1>
+      <p class="intro">{{ p.intro }}</p>
+      <p class="where">{{ p.location }}</p>
+      <ul class="links">
+        <li><a :href="'mailto:' + p.email">Email</a></li>
+        <li><a :href="p.github" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a :href="p.linkedin" target="_blank" rel="noopener">LinkedIn</a></li>
       </ul>
-
-      <div class="cta">
-        <a :href="'mailto:'+email" class="btn">Email</a>
-        <a :href="github" target="_blank" class="btn">GitHub</a>
-        <a :href="linkedin" target="_blank" class="btn">LinkedIn</a>
-      </div>
-
-      <p class="aside">
-        From the design of this website, you might have noticed I’m an <strong>Arsenal</strong> fan 🙂
-      </p>
     </div>
+    <LatencyChart class="figure" />
   </section>
 </template>
 
 <script>
-import { hero } from '../../content/siteData'
-import ArsenalBanner from '../ArsenalBanner.vue'
-
+import { profile } from '../../content/siteData'
+import LatencyChart from '../LatencyChart.vue'
 export default {
-  name:'HeroSection',
-  components:{ ArsenalBanner },
-  data(){
-    return {
-      ...hero,
-      specialties: [
-        'LLM & AI',
-        'Edge Inference',
-        'Full-Stack (Vue/Python)',
-        'Containers & CI/CD'
-      ]
-    }
-  }
+  name: 'HeroSection',
+  components: { LatencyChart },
+  data: () => ({ p: profile })
 }
 </script>
 
 <style scoped>
-.hero{
-  position:relative;
-  overflow:hidden;
-  padding-top: 84px;
-  padding-bottom: 64px;
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 48px;
+  align-items: center;
+  padding: 72px 0 64px;
 }
-
-/* tidy card sitting under the banner */
-.hero-inner{
-  background: #fff;
-  border:1px solid var(--border);
-  border-radius: 18px;
-  padding: 32px 24px 28px;
-  box-shadow: 0 12px 24px rgba(0,0,0,.06);
-  max-width: 860px;
-  margin: 0 auto;
-}
-
-.accent{ color: var(--arsenal-red); }
-
-/* Gradient, weighty role text so “Software Engineer” pops */
-.role{
-  margin: 2px 0 8px;
-  font-family: 'Outfit', Inter, system-ui, sans-serif;
-  font-weight: 800;
-  font-size: clamp(1.1rem, 1.8vw, 1.45rem);
-  letter-spacing: .2px;
-  background: linear-gradient(90deg, var(--arsenal-navy), var(--arsenal-red));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.specialties{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
-  justify-content:center;
-  margin: 6px 0 10px;
-}
-
-.chip{
-  background: var(--surface-2);
-  border:1px solid var(--border);
-  border-radius: 9999px;
-  padding: 6px 12px;
+h1 {
+  font-size: clamp(44px, 6.4vw, 76px);
+  line-height: 0.98;
   font-weight: 700;
-  color:#111;
-  transition: border-color .15s ease, box-shadow .15s ease;
+  letter-spacing: -0.03em;
 }
-.chip:hover{
-  border-color: var(--arsenal-red);
-  box-shadow: 0 8px 18px rgba(239,1,7,.12);
+.intro {
+  margin-top: 22px;
+  font-size: 20px;
+  line-height: 1.5;
+  max-width: 30ch;
 }
-
-.cta{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  margin-top: 8px;
+.where { margin-top: 12px; color: var(--muted); font-size: 15px; }
+.links {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  margin-top: 28px;
+  font-weight: 500;
 }
-
-.aside{ margin-top: 10px; color:var(--muted); font-size:.95rem; }
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; padding: 48px 0 40px; }
+  .intro { max-width: 36ch; }
+}
 </style>
